@@ -1,0 +1,11 @@
+---
+- name: Check list
+  hosts: localhost
+  remote_user: husain
+  become: true
+
+  tasks:
+    - name: ping playbook
+      anible.builtin.ping:
+
+    
