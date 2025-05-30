@@ -1,0 +1,20 @@
+---
+- name: Search CyberArk User's Log from Secure file
+  hosts: localhost
+  become: true
+  vars:
+    localhost: localhost
+  
+  tasks:
+
+    - name: Search Data
+      ansible.builtin.shell: "grep 'clea' /var/log/dnf.log | tail -10"
+      register: log_output
+
+    - name: Save log output to file on control node
+      local_action:
+        module: copy
+        content: |
+          Server: {{ localhost }}
+          {{ log_output.stdout }}
+        dest: "log_results/{{ localhost }}.log"
