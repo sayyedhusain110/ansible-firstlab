@@ -1,0 +1,7 @@
+---
+- name: Ping2 Playbook
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Ping tasks
+      ansible.builtin.ping:
