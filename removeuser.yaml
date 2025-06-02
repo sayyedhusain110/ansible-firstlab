@@ -1,0 +1,11 @@
+---
+- name: Remove User
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Remove user tasks
+      ansible.builtin.user:
+        name: srv-ansiblecon
+        state: absent
+        remove: yes
