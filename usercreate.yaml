@@ -1,0 +1,15 @@
+---
+- name: User create playbook
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: user create
+      ansible.builtin.user:
+        name: srv-ansiblecon
+        comment: ansbile user for connection
+        uid: 1001
+        group: wheel
+        
+    
+    
