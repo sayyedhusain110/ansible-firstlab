@@ -1,0 +1,11 @@
+---
+- name: Append user in usergroup
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Update user group
+      ansible.builtin.user:
+        name: srv-ansiblecon
+        groups: husain
+        append: yes
