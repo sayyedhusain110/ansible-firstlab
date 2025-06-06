@@ -3,13 +3,17 @@
   hosts: localhost
   become: true
   vars:
-    localhost: localhost
+    localhost: localhost1
   
   tasks:
 
     - name: Search Data
       ansible.builtin.shell: "grep 'clea' /var/log/dnf.log | tail -10"
       register: log_output
+
+    - name: view log_output
+      ansible.builtin.debug:
+        msg: "{{ log_output }}"
 
     - name: Save log output to file on control node
       local_action:
