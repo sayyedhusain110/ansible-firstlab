@@ -1,6 +1,6 @@
 ---
 - name: Append user in usergroup
-  hosts: localhost
+  hosts: /etc/ansible/hosts
   become: true
 
   tasks:
