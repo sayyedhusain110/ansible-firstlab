@@ -1,0 +1,14 @@
+---
+- name: Check SSHD status and register variable
+  hosts: all
+  become : true
+  gather_facts: false
+
+  tasks:
+    - name: Check if SSHD service is active
+      command : systemctl restart sshd
+      register: sshd_status
+
+    - name: Display SSHD status
+      debug:
+        var: sshd_status
