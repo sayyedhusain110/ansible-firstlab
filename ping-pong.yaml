@@ -1,0 +1,12 @@
+---
+- name : Ping check
+  hosts: all
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: Ping the hosts ,here we are using the ping-pong ping
+      register: ping_result
+      debug:
+        var: ping_result  
+      

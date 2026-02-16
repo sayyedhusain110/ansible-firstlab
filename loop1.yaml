@@ -1,0 +1,12 @@
+---
+- name: Loop Test
+  hosts: all
+  tasks:
+    - name: Loop through a list of items
+      service:
+        name: "{{ item }}"
+        state: started 
+      loop:
+        - sshd
+        - auditd
+        - rsyslog
