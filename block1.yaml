@@ -1,0 +1,27 @@
+---
+- name: Block testing
+  hosts: 192.168.1.111
+  gather_facts: no
+  become: yes
+  tasks:
+  - name: Example with error handling
+    block:
+      - name: Install package
+        service:
+          name: rsyslog
+          state: stopped
+
+      - name: Start service
+        service:
+          name: rsyslog
+          state: started
+
+    rescue:
+      - name: Print failure message
+        debug:
+          msg: "Something went wrong!"
+
+    always:
+      - name: Always runs
+        debug:
+          msg: "This runs no matter what"

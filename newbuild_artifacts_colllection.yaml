@@ -1,0 +1,92 @@
+---
+- name: New Build Artifact collection
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Service status check
+      command: systemctl status {{ item }}
+   
+      loop:
+        - rsyslog
+        - sshd
+        - firewalld
+      register: command_result
+
+    - name: Display Service command output
+      debug:
+        msg: |
+          ============================
+          Service: {{ item.item }}
+          {{ item.stdout }}
+          ============================
+      loop: "{{ command_result.results }}"
+
+    - name: Network status check
+      shell: |
+       ifconfig -a
+       iptables -L
+      register: network_status
+
+    - name: Display Network command output
+      debug:
+        msg: |
+          Network Status Output:
+          {{ network_status.stdout }} 
+    
+    - name: Disk and Memory staus check
+      shell: "{{ item }}"
+      loop:
+        - uname -a
+        - df -h 
+        - lsblk 
+        - lscpu
+        - free -h
+        - ifconfig -a
+        - iptables -L
+       # - top -b -n 1 | head -n 20
+      register: disk_memory_status  
+
+    - name: Display Disk and Memory command output
+      debug:
+        msg: |
+          Disk and Memory Status Output:
+          command: {{ item.item }}
+          {{ item.stdout }} 
+      loop: "{{ disk_memory_status.results }}"
+
+    - name: Create artifact report file
+      copy:
+        content: |
+          =========================================
+          BUILD ARTIFACT REPORT - {{ inventory_hostname }}
+          =========================================
+
+          ******** SERVICE STATUS ********
+          {% for item in command_result.results %}
+
+          ---------------------------------
+          Service: {{ item.item }}
+          {{ item.stdout }}
+
+
+          {% endfor %}
+
+          ******** SYSTEM / DISK / MEMORY ********
+
+
+          {% for item in disk_memory_status.results %}
+
+          Commnad: {{ item.item }}
+          {{ item.stdout }}     
+
+        
+          {% endfor %}
+
+          =========================================
+
+
+        dest: "./artifact_{{ inventory_hostname }}.txt"
+      delegate_to: localhost
+     
+

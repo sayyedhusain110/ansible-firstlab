@@ -1,0 +1,30 @@
+---
+- name: Secondary Login Update
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create secondary login Logs Directory
+      file:
+        path: /var/log/hhd
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      register: dir_result
+    
+    - name: Copy Script to Secondary Login
+      copy:
+        src: /home/ansible/hus-playbook/ansible-firstlab/files/files/secondary-kyndrl.sh
+        dest: /var/tmp/
+        owner: root
+        group: root
+        mode: '0755'
+      register: copy_result
+    
+    - name: debug results
+      debug:
+        var: dir_result.stdout
+        #  msg: "Directory creation result: {{ dir_result.stdout }} and Copy result: {{ copy_result.stdout }}"
+  
+      
+  

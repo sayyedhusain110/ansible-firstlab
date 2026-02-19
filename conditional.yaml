@@ -1,0 +1,23 @@
+---
+- name: Conditional testing
+  hosts: 192.168.1.111
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: Example with error handling
+    service:
+          name: rsyslog
+          state: stopped
+    when :  ansible_facts['distribution'] == "CentOS"
+
+
+  - name: Start service
+    service:
+          name: rsyslog   
+          state: started
+    when :  ansible_facts['distribution'] == "RedHat"
+
+  - name: Print failure message
+    debug:
+        msg:  "The OS distribution is {{ ansible_facts['distribution'] }}"
+    

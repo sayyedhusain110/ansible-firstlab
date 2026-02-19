@@ -1,0 +1,191 @@
+=========================================
+BUILD ARTIFACT REPORT - 192.168.1.112
+=========================================
+
+******** SERVICE STATUS ********
+
+---------------------------------
+Service: rsyslog
+● rsyslog.service - System Logging Service
+     Loaded: loaded (/usr/lib/systemd/system/rsyslog.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-18 07:04:43 IST; 17h ago
+       Docs: man:rsyslogd(8)
+             https://www.rsyslog.com/doc/
+   Main PID: 871 (rsyslogd)
+      Tasks: 3 (limit: 10882)
+     Memory: 3.9M
+        CPU: 2.317s
+     CGroup: /system.slice/rsyslog.service
+             └─871 /usr/sbin/rsyslogd -n
+
+Feb 18 07:04:43 husain-003 systemd[1]: Starting System Logging Service...
+Feb 18 07:04:43 husain-003 systemd[1]: Started System Logging Service.
+Feb 18 07:04:43 husain-003 rsyslogd[871]: [origin software="rsyslogd" swVersion="8.2102.0-105.el9" x-pid="871" x-info="https://www.rsyslog.com"] start
+Feb 18 07:04:43 husain-003 rsyslogd[871]: imjournal: journal files changed, reloading...  [v8.2102.0-105.el9 try https://www.rsyslog.com/e/0 ]
+Feb 18 18:52:48 husain-003 rsyslogd[871]: imjournal: journal files changed, reloading...  [v8.2102.0-105.el9 try https://www.rsyslog.com/e/0 ]
+Feb 18 18:52:48 husain-003 rsyslogd[871]: imjournal: journal files changed, reloading...  [v8.2102.0-105.el9 try https://www.rsyslog.com/e/0 ]
+
+
+
+---------------------------------
+Service: sshd
+● sshd.service - OpenSSH server daemon
+     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-18 07:04:43 IST; 17h ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+   Main PID: 912 (sshd)
+      Tasks: 1 (limit: 10882)
+     Memory: 6.3M
+        CPU: 1.846s
+     CGroup: /system.slice/sshd.service
+             └─912 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+
+Feb 18 23:51:56 husain-003 sshd[13850]: Accepted publickey for ansible from 192.168.1.110 port 45926 ssh2: ED25519 SHA256:L0QS2/+S26y0PeWgujyO6Mfp8qnj2OBW6Gpm6RsEF5o
+Feb 18 23:51:56 husain-003 sshd[13850]: pam_unix(sshd:session): session opened for user ansible(uid=1000) by (uid=0)
+Feb 18 23:54:43 husain-003 sshd[15597]: Accepted publickey for ansible from 192.168.1.110 port 37116 ssh2: ED25519 SHA256:L0QS2/+S26y0PeWgujyO6Mfp8qnj2OBW6Gpm6RsEF5o
+Feb 18 23:54:43 husain-003 sshd[15597]: pam_unix(sshd:session): session opened for user ansible(uid=1000) by (uid=0)
+Feb 19 00:01:00 husain-003 sshd[16946]: Accepted publickey for ansible from 192.168.1.110 port 49938 ssh2: ED25519 SHA256:L0QS2/+S26y0PeWgujyO6Mfp8qnj2OBW6Gpm6RsEF5o
+Feb 19 00:01:00 husain-003 sshd[16946]: pam_unix(sshd:session): session opened for user ansible(uid=1000) by (uid=0)
+Feb 19 00:03:10 husain-003 sshd[18296]: Accepted publickey for ansible from 192.168.1.110 port 49984 ssh2: ED25519 SHA256:L0QS2/+S26y0PeWgujyO6Mfp8qnj2OBW6Gpm6RsEF5o
+Feb 19 00:03:10 husain-003 sshd[18296]: pam_unix(sshd:session): session opened for user ansible(uid=1000) by (uid=0)
+Feb 19 00:05:05 husain-003 sshd[19627]: Accepted publickey for ansible from 192.168.1.110 port 45478 ssh2: ED25519 SHA256:L0QS2/+S26y0PeWgujyO6Mfp8qnj2OBW6Gpm6RsEF5o
+Feb 19 00:05:05 husain-003 sshd[19627]: pam_unix(sshd:session): session opened for user ansible(uid=1000) by (uid=0)
+
+
+
+---------------------------------
+Service: firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+     Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-18 07:04:43 IST; 17h ago
+       Docs: man:firewalld(1)
+   Main PID: 903 (firewalld)
+      Tasks: 2 (limit: 10882)
+     Memory: 37.3M
+        CPU: 479ms
+     CGroup: /system.slice/firewalld.service
+             └─903 /usr/bin/python3 -s /usr/sbin/firewalld --nofork --nopid
+
+Feb 18 07:04:43 husain-003 systemd[1]: Starting firewalld - dynamic firewall daemon...
+Feb 18 07:04:43 husain-003 systemd[1]: Started firewalld - dynamic firewall daemon.
+
+
+
+******** SYSTEM / DISK / MEMORY ********
+
+
+
+Commnad: uname -a
+Linux husain-003 5.14.0-162.6.1.el9_1.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Sep 30 07:36:03 EDT 2022 x86_64 x86_64 x86_64 GNU/Linux     
+
+
+
+Commnad: df -h
+Filesystem             Size  Used Avail Use% Mounted on
+devtmpfs               4.0M     0  4.0M   0% /dev
+tmpfs                  872M     0  872M   0% /dev/shm
+tmpfs                  349M  9.2M  340M   3% /run
+/dev/mapper/rhel-root   17G  3.0G   14G  18% /
+/dev/nvme0n1p2        1014M  235M  780M  24% /boot
+/dev/nvme0n1p1         599M  7.0M  592M   2% /boot/efi
+tmpfs                  175M  4.0K  175M   1% /run/user/1000     
+
+
+
+Commnad: lsblk
+NAME          MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sr0            11:0    1 101.7M  0 rom  
+sr1            11:1    1   8.4G  0 rom  
+nvme0n1       259:0    0    20G  0 disk 
+├─nvme0n1p1   259:1    0   600M  0 part /boot/efi
+├─nvme0n1p2   259:2    0     1G  0 part /boot
+└─nvme0n1p3   259:3    0  18.4G  0 part 
+  ├─rhel-root 253:0    0  16.4G  0 lvm  /
+  └─rhel-swap 253:1    0     2G  0 lvm  [SWAP]     
+
+
+
+Commnad: lscpu
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Address sizes:                   45 bits physical, 48 bits virtual
+Byte Order:                      Little Endian
+CPU(s):                          2
+On-line CPU(s) list:             0,1
+Vendor ID:                       GenuineIntel
+BIOS Vendor ID:                  GenuineIntel
+Model name:                      11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+BIOS Model name:                 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+CPU family:                      6
+Model:                           141
+Thread(s) per core:              1
+Core(s) per socket:              1
+Socket(s):                       2
+Stepping:                        1
+BogoMIPS:                        5375.99
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect md_clear flush_l1d arch_capabilities
+Hypervisor vendor:               VMware
+Virtualization type:             full
+L1d cache:                       96 KiB (2 instances)
+L1i cache:                       64 KiB (2 instances)
+L2 cache:                        2.5 MiB (2 instances)
+L3 cache:                        24 MiB (2 instances)
+NUMA node(s):                    1
+NUMA node0 CPU(s):               0,1
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Mitigation; PTE Inversion
+Vulnerability Mds:               Mitigation; Clear CPU buffers; SMT Host state unknown
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Mmio stale data:   Not affected
+Vulnerability Retbleed:          Mitigation; IBRS
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; IBRS, IBPB conditional, RSB filling, PBRSB-eIBRS Not affected
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected     
+
+
+
+Commnad: free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.7Gi       531Mi       1.1Gi       9.0Mi       247Mi       1.2Gi
+Swap:          2.0Gi          0B       2.0Gi     
+
+
+
+Commnad: ifconfig -a
+ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.112  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 2401:4900:1c5d:21ed:20c:29ff:fe80:1a6d  prefixlen 64  scopeid 0x0<global>
+        inet6 fe80::20c:29ff:fe80:1a6d  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:80:1a:6d  txqueuelen 1000  (Ethernet)
+        RX packets 24743  bytes 15142963 (14.4 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 11292  bytes 1223356 (1.1 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 4  bytes 536 (536.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 4  bytes 536 (536.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0     
+
+
+
+Commnad: iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination              
+
+
+
+=========================================
