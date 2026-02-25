@@ -1,0 +1,65 @@
+---
+- name: New Build Artifact collection with CSV and Email
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  vars:
+    report_file: "/tmp/artifact_{{ inventory_hostname }}.csv"
+
+  tasks:
+
+    - name: Service status check
+      command: systemctl is-active {{ item }}
+      loop:
+        - rsyslog
+        - sshd
+        - firewalld
+      register: service_status
+
+    - name: Command output collection
+      shell: "{{ item }}"
+      loop:
+        - uname -n ; date
+        #- date
+        - cat /etc/redhat-release
+       # - df -h 
+       # - lsblk 
+        - lscpu | awk '/^CPU\(s\):/ {print "CPU:", $2}'
+        - free -h | awk '/^Mem:/ {print "total mem:",$2} /^Swap:/ {print "swap:" $2}'        
+        - ifconfig | awk '/^[a-z]/ {iface=$1} /inet / {print iface, $2}'
+        - iptables -L
+      register: command_output  
+
+    - name: Create CSV report
+      delegate_to: localhost
+      copy:
+        dest: "{{ report_file }}" 
+        content: |
+          Host,Section,Command_or_Service,Output
+          {% for item in service_status.results %}
+          {{ inventory_hostname }},{{ item.item }},{{ item.stdout | replace(',', ' ') }}
+          {% endfor %}
+          {% for item in command_output.results %}
+          {{ inventory_hostname }},{{ item.item | replace(',', ' ') }},{{ item.stdout | replace(',', ' ') }}
+          {% endfor %}
+
+    - name: Send report via email
+      delegate_to: localhost
+      community.general.mail:
+        host: smtp.gmail.com
+        port: 587
+        username: er.husainhaider187@gmail.com
+        password: crdlrfsdqgndvqgp
+        to: er.husainhaider187@gmail.com
+        subject: Build Artifact Report - {{ inventory_hostname }}
+        body: Please find attached build artifact report.
+        attach:
+          - "{{ report_file }}"
+        secure: starttls
+
+    - name: Cleanup report
+      delegate_to: localhost
+      file:
+        path: "{{ report_file }}"
+        state: absent

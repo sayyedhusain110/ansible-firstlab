@@ -1,0 +1,81 @@
+---
+
+- name: Check Linux service status and email report
+
+  hosts: all
+  become: true
+  gather_facts: false
+ 
+  vars:
+
+    services_to_check:
+
+        - rsyslog
+        - sshd
+        - firewalld
+    report_recipient: "er.husainhaider187@gmail.com"
+ 
+    # SMTP configuration (adjust as needed)
+
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    username: er.husainhaider187@gmail.com
+    password: crdlrfsdqgndvqgp
+    smtp_timeout: 30
+ 
+  tasks:
+ 
+    - name: Gather service facts
+
+      ansible.builtin.service_facts:
+ 
+    - name: Build formatted service report
+
+      ansible.builtin.set_fact:
+
+        formatted_report: |
+
+          {% for svc in services_to_check %}
+
+          {% set service_key = svc + '.service' %}
+
+          {{ svc }} ====>> {{
+
+            (
+
+              ansible_facts.services[service_key].state
+
+              if service_key in ansible_facts.services
+
+              else 'NOT-FOUND'
+
+            ) | upper
+
+          }}
+
+          {% endfor %}
+ 
+    - name: Display formatted report
+
+      ansible.builtin.debug:
+
+        msg: "{{ formatted_report }}"
+ 
+    - name: Send service status email
+
+      ansible.builtin.mail:
+
+        host: "{{ smtp_host }}"
+
+        port: "{{ smtp_port }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        timeout: "{{ smtp_timeout }}"
+        to: "{{ report_recipient }}"
+        subject: "Service Status Report - {{ inventory_hostname }}"
+
+        body: |
+          Host: {{ inventory_hostname }}
+          {{ formatted_report }}
+      delegate_to: localhost
+ 

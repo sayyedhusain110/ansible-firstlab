@@ -5,55 +5,27 @@
   gather_facts: no
   tasks:
     - name: Service status check
-      command: systemctl status {{ item }}
-   
+      command: systemctl is-active {{ item }}
       loop:
         - rsyslog
         - sshd
         - firewalld
-      register: command_result
+      register: service_status
 
-    - name: Display Service command output
-      debug:
-        msg: |
-          ============================
-          Service: {{ item.item }}
-          {{ item.stdout }}
-          ============================
-      loop: "{{ command_result.results }}"
-
-    - name: Network status check
-      shell: |
-       ifconfig -a
-       iptables -L
-      register: network_status
-
-    - name: Display Network command output
-      debug:
-        msg: |
-          Network Status Output:
-          {{ network_status.stdout }} 
-    
-    - name: Disk and Memory staus check
+    - name: Command output for service status check
       shell: "{{ item }}"
       loop:
-        - uname -a
+        - uname -n ; date
+        #- date
+        - cat /etc/redhat-release
         - df -h 
         - lsblk 
-        - lscpu
-        - free -h
-        - ifconfig -a
+        - lscpu | awk '/^CPU\(s\):/ {print "CPU:", $2}'
+        - free -h | awk '/^Mem:/ {print "total mem:",$2} /^Swap:/ {print "swap:" $2}'        
+        - ifconfig | awk '/^[a-z]/ {iface=$1} /inet / {print iface, $2}'
         - iptables -L
-       # - top -b -n 1 | head -n 20
-      register: disk_memory_status  
-
-    - name: Display Disk and Memory command output
-      debug:
-        msg: |
-          Disk and Memory Status Output:
-          command: {{ item.item }}
-          {{ item.stdout }} 
-      loop: "{{ disk_memory_status.results }}"
+       #- top -b -n 1 | head -n 20
+      register: command_output  
 
     - name: Create artifact report file
       copy:
@@ -63,7 +35,7 @@
           =========================================
 
           ******** SERVICE STATUS ********
-          {% for item in command_result.results %}
+          {% for item in service_status.results %}
 
           ---------------------------------
           Service: {{ item.item }}
@@ -75,9 +47,9 @@
           ******** SYSTEM / DISK / MEMORY ********
 
 
-          {% for item in disk_memory_status.results %}
+          {% for item in command_output.results %}
 
-          Commnad: {{ item.item }}
+          Command: {{ item.item }}
           {{ item.stdout }}     
 
         
@@ -88,5 +60,3 @@
 
         dest: "./artifact_{{ inventory_hostname }}.txt"
       delegate_to: localhost
-     
-

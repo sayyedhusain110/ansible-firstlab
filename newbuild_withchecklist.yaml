@@ -1,0 +1,210 @@
+---
+- name: Enterprise Linux Compliance Artifact Collection
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+
+    report_recipient: "er.husainhaider187@gmail.com"
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    username: er.husainhaider187@gmail.com
+    password: rdlrfsdqgndvqg
+    artifact_dir: "./artifacts"
+
+    checklist_commands:
+
+      "1.1":
+        name: "Kernel Version"
+        command: "uname -a"
+
+      "1.2":
+        name: "OS Release"
+        command: "cat /etc/redhat-release"
+
+      "3.1":
+        name: "Firewalld Service Status"
+        command: "systemctl is-active firewalld"
+        expected: "active"
+
+      "3.2":
+        name: "Splunk Forwarder Status"
+        command: "systemctl is-active SplunkForwarder"
+        expected: "active"
+
+      "4.1":
+        name: "Falcon Sensor Status"
+        command: "systemctl is-active falcon-sensor.service"
+        expected: "active"
+
+      "4.2":
+        name: "IPTables Rules"
+        command: "iptables -L"
+
+      "5.1":
+        name: "CPU Information"
+        command: "lscpu"
+
+      "5.2":
+        name: "Memory Usage"
+        command: "free -h"
+
+      "5.3":
+        name: "Disk Usage"
+        command: "df -h"
+
+      "6.1":
+        name: "Block Devices"
+        command: "lsblk"
+
+      "7.1":
+        name: "Network Interfaces"
+        command: "ifconfig -a"
+
+      "8.1":
+        name: "Vastool Host Info"
+        command: "/opt/quest/bin/vastool -u host/ info id"
+
+      "8.2":
+        name: "VGPT Tool GPC List"
+        command: "/opt/quest/bin/vgptool listgpc"
+
+  tasks:
+
+    - name: Create artifact directory
+      file:
+        path: "{{ artifact_dir }}"
+        state: directory
+      delegate_to: localhost
+      run_once: true
+
+    - name: Run checklist commands
+      shell: "{{ item.value.command }}"
+      register: checklist_output
+      ignore_errors: yes
+      loop: "{{ checklist_commands | dict2items }}"
+
+    - name: Evaluate PASS/FAIL
+      set_fact:
+        evaluated_results: "{{ evaluated_results | default([]) + [ {
+            'id': item.item.key,
+            'name': item.item.value.name,
+            'command': item.item.value.command,
+            'stdout': item.stdout | default(''),
+            'stderr': item.stderr | default(''),
+            'status': (
+                'PASS'
+                if item.item.value.expected is defined and
+                   item.stdout.strip() == item.item.value.expected
+                else (
+                    'FAIL'
+                    if item.item.value.expected is defined
+                    else 'INFO'
+                )
+            )
+        } ] }}"
+      loop: "{{ checklist_output.results }}"
+
+
+    - name: Build advanced HTML report
+      set_fact:
+        html_report: |
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial; background-color: #f4f6f8; }
+              h2 { color: #2c3e50; }
+              .summary {
+                  background: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  margin-bottom: 20px;
+                  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+              }
+              .section {
+                  background-color: #ffffff;
+                  padding: 15px;
+                  margin-bottom: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+              }
+              .pass { color: green; font-weight: bold; }
+              .fail { color: red; font-weight: bold; }
+              .info { color: #555; font-weight: bold; }
+              .check-id {
+                  background-color: #2c3e50;
+                  color: white;
+                  padding: 5px 10px;
+                  border-radius: 5px;
+              }
+              pre {
+                  background-color: #1e1e1e;
+                  color: #00ff90;
+                  padding: 10px;
+                  overflow-x: auto;
+              }
+            </style>
+          </head>
+          <body>
+
+          <h2>Enterprise Linux Compliance Report</h2>
+
+          <div class="summary">
+              <b>Host:</b> {{ inventory_hostname }}<br>
+              <b>Date:</b> {{ ansible_date_time.iso8601 }}<br>
+
+
+          {% for item in evaluated_results %}
+          <div class="section">
+              <span class="check-id">Checklist {{ item.id }}</span>
+              <h3>{{ item.name }}</h3>
+
+              Status:
+              {% if item.status == 'PASS' %}
+                  <span class="pass">PASS</span>
+              {% elif item.status == 'FAIL' %}
+                  <span class="fail">FAIL</span>
+              {% else %}
+                  <span class="info">INFO</span>
+              {% endif %}
+
+              <pre>
+                {{ item.stdout }}
+              </pre>
+
+              {% if item.stderr %}
+              <b>Error:</b>
+              <pre>{{ item.stderr }}</pre>
+              {% endif %}
+          </div>
+          {% endfor %}
+
+          </body>
+          </html>
+
+    - name: Save HTML artifact
+      copy:
+        content: "{{ html_report }}"
+        dest: "{{ artifact_dir }}/{{ inventory_hostname }}_compliance_report.html"
+      delegate_to: localhost
+
+    - name: Send HTML Email
+      ansible.builtin.mail:
+        host: smtp.gmail.com
+        port: 587
+        username: er.husainhaider187@gmail.com
+        password: crdlrfsdqgndvqgp
+        to: "{{ report_recipient }}"
+        from: "{{ username }}"
+        subject: "Enterprise Compliance Report - {{ inventory_hostname }}"
+        subtype: html
+        body: "{{ html_report }}"
+        secure: starttls
+      delegate_to: localhost
+
+    - name: Cleanup artifact directory (control node)
+      delegate_to: localhost
+      file:
+        path: "{{ artifact_dir }}"
+        state: absent
