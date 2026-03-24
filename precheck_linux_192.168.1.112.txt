@@ -48,25 +48,25 @@ ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.1.112  netmask 255.255.255.0  broadcast 192.168.1.255
         inet6 fe80::20c:29ff:fe8c:d6ee  prefixlen 64  scopeid 0x20<link>
         ether 00:0c:29:8c:d6:ee  txqueuelen 1000  (Ethernet)
-        RX packets 1013843  bytes 820135390 (782.1 MiB)
+        RX packets 1055467  bytes 842104217 (803.0 MiB)
         RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 729593  bytes 258505787 (246.5 MiB)
+        TX packets 762783  bytes 272048342 (259.4 MiB)
         TX errors 0  dropped 5 overruns 0  carrier 0  collisions 0
 
 lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         inet 127.0.0.1  netmask 255.0.0.0
         inet6 ::1  prefixlen 128  scopeid 0x10<host>
         loop  txqueuelen 1000  (Local Loopback)
-        RX packets 1624777  bytes 274191003 (261.4 MiB)
+        RX packets 1707602  bytes 288189465 (274.8 MiB)
         RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 1624777  bytes 274191003 (261.4 MiB)
+        TX packets 1707602  bytes 288189465 (274.8 MiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0     
 
 
 
 Command: free -m
                total        used        free      shared  buff/cache   available
-Mem:            8214        2349        5180         119        1076        5864
+Mem:            8214        2367        5161         119        1077        5846
 Swap:           2047           0        2047     
 
 
@@ -99,7 +99,7 @@ nvme0n2       259:4    0    30G  0 disk
 
 
 Command: systemctl list-units --type=service --state=active | wc -l
-61     
+62     
 
 
 

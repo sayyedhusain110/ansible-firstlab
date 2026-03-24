@@ -1,0 +1,89 @@
+---
+- name: Linux Patching Precheck Collection
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+
+   - name: Create directory on managed node
+     file:
+       path: /var/tmp/Precheck
+       state: directory
+       mode: '0775'
+
+
+   - name: Precheck Collection
+     shell: "{{ item }}"
+     loop:
+       - df -h | wc -l
+       - df -hT
+       - cat /etc/fstab
+       - ifconfig -a
+       - free -m
+       - uname -r
+       - needs-restarting -r
+       - lsblk
+       - systemctl list-units --type=service --state=active | wc -l
+       - route -n
+       - mount
+       - cat /etc/redhat-release
+       - lscpu | awk '/^CPU\(s\):/ {print "CPU:", $2}'
+       - free -h | awk '/^Mem:/ {print "total mem:",$2} /^Swap:/ {print "swap:" $2}'
+       - ifconfig | awk '/^[a-z]/ {iface=$1} /inet / {print iface, $2}'
+
+     register: command_output
+
+
+   - name: Create artifact report file
+     copy:
+       content: |
+         =========================================
+         Patching Precheck Collection REPORT - {{ inventory_hostname }}
+         =========================================
+
+         {% for item in command_output.results %}
+
+         Command: {{ item.item }}
+         {{ item.stdout }}
+
+         {% endfor %}
+
+         =========================================
+
+       dest: "/var/tmp/Precheck/precheck_linux_{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.txt"
+
+
+   - name: Fetch file to control node
+     fetch:
+       src: "/var/tmp/Precheck/precheck_linux_{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.txt"
+       dest: "./Precheck/"
+       flat: yes
+
+
+
+- name: Send report via email
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+   - name: Send report mail
+     delegate_to: localhost
+     community.general.mail:
+       host: smtp.gmail.com
+       port: 587
+       username: er.husainhaider187@gmail.com
+       password: crdlrfsdqgndvqgp
+       to: 
+         - er.husainhaider187@gmail.com
+         # - adminhashim@gmail.com 
+       subject: Patching Precheck report
+       body: Please find attached Patching Precheck report.
+       attach: "{{ lookup('fileglob', './Precheck/*', wantlist=True) }}"
+
+   - name: Cleanup report
+     delegate_to: localhost
+     file:
+        path: "./Precheck/*"
+        state: absent

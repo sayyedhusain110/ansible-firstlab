@@ -1,5 +1,5 @@
 =========================================
-BUILD ARTIFACT REPORT - 192.168.1.112
+BUILD ARTIFACT REPORT - 192.168.1.111
 =========================================
 
 ******** SYSTEM / DISK / MEMORY ********
@@ -7,20 +7,21 @@ BUILD ARTIFACT REPORT - 192.168.1.112
 
 
 Command: df -h | wc -l
-9     
+10     
 
 
 
 Command: df -hT
 Filesystem            Type      Size  Used Avail Use% Mounted on
 devtmpfs              devtmpfs  4.0M     0  4.0M   0% /dev
-tmpfs                 tmpfs     4.1G  1.3M  4.1G   1% /dev/shm
-tmpfs                 tmpfs     1.7G  9.2M  1.6G   1% /run
+tmpfs                 tmpfs     985M  4.0K  985M   1% /dev/shm
+tmpfs                 tmpfs     394M   37M  358M  10% /run
 efivarfs              efivarfs  256K   57K  195K  23% /sys/firmware/efi/efivars
-/dev/mapper/rhel-root xfs        42G   13G   30G  30% /
+/dev/mapper/rhel-root xfs        42G  7.0G   35G  17% /
 /dev/nvme0n1p2        xfs      1014M  438M  577M  44% /boot
 /dev/nvme0n1p1        vfat      599M  7.4M  592M   2% /boot/efi
-tmpfs                 tmpfs     822M  4.0K  822M   1% /run/user/1000     
+tmpfs                 tmpfs     197M  4.0K  197M   1% /run/user/0
+tmpfs                 tmpfs     197M  4.0K  197M   1% /run/user/1000     
 
 
 
@@ -45,29 +46,29 @@ UUID=72AE-6C3F          /boot/efi               vfat    umask=0077,shortname=win
 
 Command: ifconfig -a
 ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.1.112  netmask 255.255.255.0  broadcast 192.168.1.255
-        inet6 fe80::20c:29ff:fe8c:d6ee  prefixlen 64  scopeid 0x20<link>
-        ether 00:0c:29:8c:d6:ee  txqueuelen 1000  (Ethernet)
-        RX packets 1013843  bytes 820135390 (782.1 MiB)
+        inet 192.168.1.111  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 fe80::20c:29ff:fe24:3905  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:24:39:05  txqueuelen 1000  (Ethernet)
+        RX packets 715841  bytes 742681755 (708.2 MiB)
         RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 729593  bytes 258505787 (246.5 MiB)
-        TX errors 0  dropped 5 overruns 0  carrier 0  collisions 0
+        TX packets 566679  bytes 240194153 (229.0 MiB)
+        TX errors 0  dropped 13 overruns 0  carrier 0  collisions 0
 
 lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         inet 127.0.0.1  netmask 255.0.0.0
         inet6 ::1  prefixlen 128  scopeid 0x10<host>
         loop  txqueuelen 1000  (Local Loopback)
-        RX packets 1624777  bytes 274191003 (261.4 MiB)
+        RX packets 744417  bytes 2278685692 (2.1 GiB)
         RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 1624777  bytes 274191003 (261.4 MiB)
+        TX packets 744417  bytes 2278685692 (2.1 GiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0     
 
 
 
 Command: free -m
                total        used        free      shared  buff/cache   available
-Mem:            8214        2349        5180         119        1076        5864
-Swap:           2047           0        2047     
+Mem:            1969        1124         345          37         704         844
+Swap:           2047          81        1966     
 
 
 
@@ -84,22 +85,22 @@ Reboot should not be necessary.
 
 
 Command: lsblk
-NAME          MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-sr0            11:0    1 101.7M  0 rom  
-sr1            11:1    1  1024M  0 rom  
-nvme0n1       259:0    0    20G  0 disk 
-├─nvme0n1p1   259:1    0   600M  0 part /boot/efi
-├─nvme0n1p2   259:2    0     1G  0 part /boot
-└─nvme0n1p3   259:3    0  18.4G  0 part 
-  ├─rhel-root 253:0    0  41.4G  0 lvm  /
-  └─rhel-swap 253:1    0     2G  0 lvm  [SWAP]
-nvme0n2       259:4    0    30G  0 disk 
-└─rhel-root   253:0    0  41.4G  0 lvm  /     
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0            11:0    1 1024M  0 rom  
+sr1            11:1    1 1024M  0 rom  
+nvme0n1       259:0    0   20G  0 disk 
+├─nvme0n1p1   259:1    0  600M  0 part /boot/efi
+├─nvme0n1p2   259:2    0    1G  0 part /boot
+└─nvme0n1p3   259:3    0 18.4G  0 part 
+  ├─rhel-root 253:0    0 41.4G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+nvme0n2       259:4    0   30G  0 disk 
+└─rhel-root   253:0    0 41.4G  0 lvm  /     
 
 
 
 Command: systemctl list-units --type=service --state=active | wc -l
-61     
+62     
 
 
 
@@ -114,11 +115,11 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 Command: mount
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
-devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=4096k,nr_inodes=1045801,mode=755,inode64)
+devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=4096k,nr_inodes=246426,mode=755,inode64)
 securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
 tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel,inode64)
 devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=000)
-tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,size=1682268k,nr_inodes=819200,mode=755,inode64)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,size=403272k,nr_inodes=819200,mode=755,inode64)
 cgroup2 on /sys/fs/cgroup type cgroup2 (rw,nosuid,nodev,noexec,relatime,seclabel,nsdelegate,memory_recursiveprot)
 pstore on /sys/fs/pstore type pstore (rw,nosuid,nodev,noexec,relatime,seclabel)
 efivarfs on /sys/firmware/efi/efivars type efivarfs (rw,nosuid,nodev,noexec,relatime)
@@ -126,18 +127,19 @@ bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=700)
 configfs on /sys/kernel/config type configfs (rw,nosuid,nodev,noexec,relatime)
 /dev/mapper/rhel-root on / type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 selinuxfs on /sys/fs/selinux type selinuxfs (rw,nosuid,noexec,relatime)
-systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=29,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=18154)
-hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel,pagesize=2M)
+systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=29,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=26264)
 mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime,seclabel)
+hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel,pagesize=2M)
 debugfs on /sys/kernel/debug type debugfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 tracefs on /sys/kernel/tracing type tracefs (rw,nosuid,nodev,noexec,relatime,seclabel)
 fusectl on /sys/fs/fuse/connections type fusectl (rw,nosuid,nodev,noexec,relatime)
-none on /run/credentials/systemd-sysctl.service type ramfs (ro,nosuid,nodev,noexec,relatime,seclabel,mode=700)
 none on /run/credentials/systemd-tmpfiles-setup-dev.service type ramfs (ro,nosuid,nodev,noexec,relatime,seclabel,mode=700)
+none on /run/credentials/systemd-sysctl.service type ramfs (ro,nosuid,nodev,noexec,relatime,seclabel,mode=700)
 /dev/nvme0n1p2 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 /dev/nvme0n1p1 on /boot/efi type vfat (rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=ascii,shortname=winnt,errors=remount-ro)
 none on /run/credentials/systemd-tmpfiles-setup.service type ramfs (ro,nosuid,nodev,noexec,relatime,seclabel,mode=700)
-tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=841132k,nr_inodes=210283,mode=700,uid=1000,gid=1000,inode64)     
+tmpfs on /run/user/0 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=201632k,nr_inodes=50408,mode=700,inode64)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=201632k,nr_inodes=50408,mode=700,uid=1000,gid=1000,inode64)     
 
 
 
@@ -152,13 +154,13 @@ CPU: 2
 
 
 Command: free -h | awk '/^Mem:/ {print "total mem:",$2} /^Swap:/ {print "swap:" $2}'
-total mem: 8.0Gi
+total mem: 1.9Gi
 swap:2.0Gi     
 
 
 
 Command: ifconfig | awk '/^[a-z]/ {iface=$1} /inet / {print iface, $2}'
-ens160: 192.168.1.112
+ens160: 192.168.1.111
 lo: 127.0.0.1     
 
 

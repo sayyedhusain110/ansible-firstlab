@@ -1,0 +1,34 @@
+2026-03-23T17:29:07.692829+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:29:07.693353+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: 
+2026-03-23T17:29:07.693442+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: current system boot ID differs from cached boot ID; an unhandled reboot has occurred. Please delete directories "/tmp/storage-run-1000/containers" and "/tmp/storage-run-1000/libpod/tmp" and re-run Podman
+
+2026-03-23T17:29:07.770736+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-03-23T17:30:59.481898+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:30:59.482373+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: 
+2026-03-23T17:30:59.482455+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: current system boot ID differs from cached boot ID; an unhandled reboot has occurred. Please delete directories "/tmp/storage-run-1000/containers" and "/tmp/storage-run-1000/libpod/tmp" and re-run Podman
+
+2026-03-23T17:30:59.559421+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-03-23T17:31:55.091811+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:31:55.092366+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-03-23T17:31:55.092456+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: registry.redhat.io/ansible-automation-platform-26/ee-supported-rhel9:latest: image not known
+
+2026-03-23T17:31:57.149587+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-03-23T17:38:39.225523+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:38:39.225974+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-03-23T17:38:39.226108+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: registry.redhat.io/ansible-automation-platform-26/ee-supported-rhel9:latest: image not known
+
+2026-03-23T17:38:41.103166+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-03-23T17:40:17.686632+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:40:17.687080+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-03-23T17:40:17.687166+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: registry.redhat.io/ansible-automation-platform-26/ee-supported-rhel9:latest: image not known
+
+2026-03-23T17:40:19.728284+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-03-23T17:41:09.267599+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-03-23T17:41:09.268287+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-03-23T17:41:09.268390+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: registry.redhat.io/ansible-automation-platform-26/ee-supported-rhel9:latest: image not known
+
+2026-03-23T17:41:11.189149+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
