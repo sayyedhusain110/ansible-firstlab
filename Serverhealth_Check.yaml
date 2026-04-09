@@ -1,0 +1,23 @@
+---
+- name: Server Health Check
+  hosts: all
+  tasks:
+    - name: Check CPU usage
+      shell: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\([0-9.]*\)%* id.*/\\1/' | awk '{print 100 - $1}'"
+      register: cpu_usage
+
+    - name: Check Memory usage
+      shell: "free -m | awk 'NR==2{printf \"%.2f\", $3*100/$2 }'"
+      register: memory_usage
+
+    - name: Check Disk usage
+      shell: "df -h / | awk 'NR==2 {print $5}'"
+      register: disk_usage
+
+    - name: Display results
+      debug:
+        msg: |
+          CPU Usage: {{ cpu_usage.stdout }}%
+          Memory Usage: {{ memory_usage.stdout }}%
+          Disk Usage: {{ disk_usage.stdout }}
+ 
