@@ -1,0 +1,27 @@
+---
+- name: Check Available Disk Space
+  setup: 
+    gather_subset:
+      - facter
+      - hardware
+      - mounts
+
+- name: Check if root disk has enough space
+  assert: 
+    that: 
+      - item.mount == '/'
+      - item.size_available >= root_disk_min_size
+    fail_msg: "does not have enough available space."
+    quiet: true
+    success_msg: "Root disk has sufficient available space."
+  loop: "{{ root_disks }}"
+  loop_control:
+    label: "{{ item.mount }}"
+  failed_when: false
+  register: result_root_disk
+
+- set_fact:
+      root_disk_status: "{{ item.msg }}"
+  loop: "{{ result_root_disk.results }}"
+  loop_control:
+    label: "{{ item.msg }}"

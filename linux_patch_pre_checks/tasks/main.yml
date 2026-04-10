@@ -1,0 +1,13 @@
+# tasks file for linux_patch_pre_checks
+---
+
+- name: Include Available Disk Space Check Tasks
+  include_tasks: avail_disk_space.yml
+  tags: avail_disk_space
+
+- name: Include Pre-Patch Backup Tasks
+  include_tasks: pre_check_backup.yml
+  tags: pre_check_backup
+
+
+

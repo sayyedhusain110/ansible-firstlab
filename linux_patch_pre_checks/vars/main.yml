@@ -1,0 +1,22 @@
+# vars file for linux_patch_pre_checks
+pre_patch_dir: /var/tmp/Pre-Patch-backup
+post_patch_dir: /var/tmp/Post-Patch-backup
+
+pre_patch_cmd_rhel_8_comm:
+  - "/bin/df -hT > {{ pre_patch_dir }}/df-ht.pre.out"
+  - "/bin/df -i > {{ pre_patch_dir }}/df-ipre.out"
+  - "/bin/cat /etc/fstab > {{ pre_patch_dir }}/fstab.pre.out"
+  - "/bin/cat /etc/selinux/config > {{ pre_patch_dir }}/selinux_config.pre.out"
+  - "/bin/cat /etc/os-release > {{ pre_patch_dir }}/os-release.pre.out"
+  - "/bin/cat /etc/redhat-release > {{ pre_patch_dir }}/redhat-release.pre.out"
+  - "/bin/rpm -qa > {{ pre_patch_dir }}/rpmqa.pre.out"
+  - "/bin/systemctl list-units --type=service > {{ pre_patch_dir }}/systemctl_service.pre.out"
+  - "/bin/systemctl list-units --type=socket > {{ pre_patch_dir }}/systemctl_socket.pre.out"
+  - "/sbin/ifconfig -a > {{ pre_patch_dir }}/ifconfig.pre.out"
+  - "/bin/uname -a > {{ pre_patch_dir }}/uname.pre.out"
+
+ #Disk Space Check
+root_disk_min_size: 107374182 # 1GB
+var_disk_min_size: 107374182 # 1GB
+root_disks: "{{ ansible_mounts | selectattr('mount', 'equalto', '/') | list }}"
+var_disks: "{{ ansible_mounts | selectattr('mount', 'equalto', '/var') | list }}"

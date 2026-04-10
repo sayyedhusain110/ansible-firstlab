@@ -1,0 +1,8 @@
+---
+- name: Linux Patch Pre-checks
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - linux_patch_pre_checks

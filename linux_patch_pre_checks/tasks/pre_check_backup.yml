@@ -1,0 +1,49 @@
+---
+- name: Collect Prechecks Facts
+  stat:
+     path: "{{ pre_patch_dir }}"
+  register: prepatch
+  notify: Archive Pre-Patch Backup Directory
+
+- name: Create Pre-Patch Backup Directory if it does not exist
+  file:
+    path: "{{ pre_patch_dir }}"
+    state: directory
+    mode: '0755'
+  when: prepatch.stat.exists == False
+
+ 
+- name: Archive Pre-Patch Backup Directory
+  archive:
+    path: "{{ pre_patch_dir }}"
+    dest: "{{ pre_patch_dir }}-{{ansible_date_time.date}}.tar.gz"
+    format: gz
+  register: prepatch_archive
+  when: prepatch.stat.exists == True
+  failed_when: false
+
+- name: Remove the old pre-check backup directory
+  file:
+    path: "{{ pre_patch_dir }}"
+    state: absent
+  when: prepatch.stat.exists == True
+  register: prepatch_remove
+
+- name: Create New Pre-Patch Backup Directory
+  file:
+    path: "{{ pre_patch_dir }}"
+    state: directory
+    mode: '0755'
+  when: prepatch_remove.changed == True
+
+- name: Execute Pre-Patch Commands for RHEL 8
+  shell: "{{ item }}"
+  loop: "{{ pre_patch_cmd_rhel_8_comm}}"
+  args:
+    executable: /bin/bash 
+  register: pre_patch_cmd_results
+  failed_when: pre_patch_cmd_results.rc != 0
+
+
+
+
