@@ -2,6 +2,7 @@
 - name: Check Windows Connectivity
   hosts: all
   gather_facts: no
+  become: no
 
   tasks:
 
