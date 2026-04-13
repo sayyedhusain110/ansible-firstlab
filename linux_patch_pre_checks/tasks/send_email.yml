@@ -28,7 +28,7 @@
     flat: yes
 
 - name: Read report locally
-  shell: cat /tmp/reports/{{ inventory_hostname }}__disk_space_report.html
+  shell: sudo cat /tmp/reports/{{ inventory_hostname }}__disk_space_report.html
   register: report_content
   delegate_to: localhost
 
