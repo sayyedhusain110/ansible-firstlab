@@ -28,6 +28,7 @@
     flat: yes
 
 - name: Read report locally
+  become: no 
   shell: cat /tmp/reports/{{ inventory_hostname }}__disk_space_report.html
   register: report_content
   delegate_to: localhost
