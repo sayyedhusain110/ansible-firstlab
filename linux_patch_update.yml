@@ -1,6 +1,6 @@
 ---
 - name: Linux Patch Update
-  hosts: all
+  hosts: linuxall
   become: true
   gather_facts: false
 
