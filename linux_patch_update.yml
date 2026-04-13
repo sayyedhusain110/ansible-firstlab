@@ -1,0 +1,8 @@
+---
+- name: Linux Patch Update
+  hosts: all
+  become: true
+  gather_facts: false
+
+  roles:
+    - linux_patch_update

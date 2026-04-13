@@ -1,0 +1,59 @@
+---
+# tasks file for linux_patch_update
+# - name: Clean and Refresh repositories
+#   command:
+#    "{{ item }}"  
+#   loop:
+#     - dnf clean all
+#     - dnf makecache
+#   register: refresh_repos
+#   failed_when: refresh_repos.rc != 0
+
+# - name: Check Update and Reboot if required
+#   command:
+#    "{{ item }}"
+#   loop:
+#     - dnf check-update -q
+#     - needs-restarting -r
+#   register: update_results
+#   ignore_errors: true
+
+#  name: Update Patches
+#   command:
+#    "{{ item }}"
+#   loop:
+#     - dnf update -y
+#   register: patch_update_results
+#   failed_when: patch_update_results.rc != 0 #/
+
+- name: Apply all security and bugfix updates
+  yum:
+    name: '*'
+    state: latest
+  register: patching_result
+  notify: Reboot system if required
+  
+- name: Show patching result
+  debug:
+    var: patching_result
+      
+- name: Wait for system to come back
+  wait_for_connection:
+    timeout: 300
+
+- name: Check uptime after patching
+  shell: uptime
+  register: uptime_after
+
+- name: Show uptime after patching
+  debug:
+    var: uptime_after.stdout
+
+- name: Verify no pending updates
+  yum:
+    list: updates
+  register: post_updates
+
+- name: Show remaining updates
+  debug:
+    msg: "Remaining updates: {{ post_updates.results | length }}"

@@ -1,0 +1,7 @@
+---
+  - name: Reboot system if required
+    reboot:
+      msg: "Reboot initiated by Ansible after patching"
+      pre_reboot_delay: 10
+      reboot_timeout: 600  
+
