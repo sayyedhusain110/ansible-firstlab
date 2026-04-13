@@ -2,15 +2,12 @@
 - name: Check Windows Connectivity
   hosts: all
   gather_facts: no
-  collections:
-    - ansible.windows
 
   tasks:
 
     - name: Test WinRM connectivity
       win_ping:
       register: ping_result
-      ignore_errors: yes
 
     - name: Show result
       debug:
