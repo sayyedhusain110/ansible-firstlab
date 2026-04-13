@@ -44,7 +44,7 @@
 
          {% for item in command_output.results %}
 
-         Command: {{ item.item }}
+         Command: {{ item.item }};  
          {{ item.stdout }}
 
          {% endfor %}
