@@ -1,6 +1,6 @@
 ---
 - name: Linux Patch Pre-checks
-  hosts: all
+  hosts: linuxall
   become: true
   gather_facts: true
 

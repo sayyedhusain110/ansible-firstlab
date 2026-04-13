@@ -1,0 +1,52 @@
+- name: Fetch report to control node
+  fetch:
+    src: "/tmp/disk_space_report/{{ inventory_hostname }}__disk_space_report.html"
+    dest: "/tmp/reports/"
+    flat: yes
+
+- name: tar the precheck directory
+  archive:
+     path: "{{ pre_patch_dir }}"
+     dest: "{{ pre_patch_dir }}-{{ansible_date_time.date}}.tar.gz"
+     format: gz
+  register: precheck_archive
+  when: precheck_archive is not defined or precheck_archive.changed == true
+  failed_when: false
+
+- name: fetch the precheck archive to control node
+  fetch:
+    src: "{{ precheck_archive.dest }}"
+    dest: "/tmp/reports/"
+    flat: yes
+    resgister: fetch_precheck_report
+  when: precheck_archive.changed == true  
+
+- name: Fetch report to control node
+  fetch:
+    src: "/tmp/disk_space_report/{{ inventory_hostname }}__disk_space_report.html"
+    dest: "/tmp/reports/"
+    flat: yes
+
+- name: Read report locally
+  shell: cat /tmp/reports/{{ inventory_hostname }}__disk_space_report.html
+  register: report_content
+  delegate_to: localhost
+
+- name: Send report mail  
+  delegate_to: localhost
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: er.husainhaider187@gmail.com
+    password: crdlrfsdqgndvqgp
+    to: 
+      - er.husainhaider187@gmail.com
+    subject: "Patching Precheck report"
+    subtype: html
+    body: |-
+      Please find attached Patching Precheck report.<br><br>
+      {{ report_content.stdout }}<br><br>
+      Regards,<br>
+      Ansible Automation Team
+    attach: 
+      - "/tmp/reports/{{ precheck_archive.dest | basename }}"

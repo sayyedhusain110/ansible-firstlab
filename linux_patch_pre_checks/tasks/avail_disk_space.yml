@@ -11,9 +11,9 @@
     that: 
       - item.mount == '/'
       - item.size_available >= root_disk_min_size
-    fail_msg: "does not have enough available space."
+    fail_msg: "Free Space not available"
     quiet: true
-    success_msg: "Root disk has sufficient available space."
+    success_msg: "Free Space available"
   loop: "{{ root_disks }}"
   loop_control:
     label: "{{ item.mount }}"
@@ -25,3 +25,90 @@
   loop: "{{ result_root_disk.results }}"
   loop_control:
     label: "{{ item.msg }}"
+
+- set_fact:
+      size_available: "{{ ((item.size_available / 1024) / 1024)) | round|int }}"
+  loop: "{{ root_disks }}"
+  loop_control:
+    label: "{{ item.size_available }}"
+  when: item.mount == 'Free Space available'
+
+- name: Check if /var disk has enough space
+  assert: 
+    that: 
+      - item.mount == '/var'
+      - item.size_available >= var_disk_min_size
+    fail_msg: "Free Space not available"
+    quiet: true
+    success_msg: "Free Space available"
+  loop: "{{ var_disks }}"
+  loop_control:
+    label: "{{ item.mount }}"
+  failed_when: false
+  register: result_var_disk
+
+- set_fact:
+      var_disk_status: "{{ item.msg }}"
+  loop: "{{ result_var_disk.results }}"
+  loop_control:
+    label: "{{ item.msg }}"
+
+- set_fact:
+      size_available: "{{ ((item.size_available / 1024) / 1024)) | round|int }}"
+  loop: "{{ var_disks }}"
+  loop_control:
+    label: "{{ item.size_available }}"
+  when: item.mount == 'Free Space available'
+
+
+- block:
+    - name: Create Report
+      set_fact:
+        disk_space_report_dir: '/tmp/disk_space_report'
+      register: result_disk_space_report_dir
+      run_once: true  
+
+    - name: Check Directory Status
+      stat:
+        path: "{{ result_disk_space_report_dir }}"
+      register: result_report_dir
+      run_once: true
+
+
+    - name: Create Report Directory
+      file:
+        path: "{{ disk_space_report_dir }}"
+        state: directory
+        mode: "0755"
+      when: result_report_dir.stat.exists == false
+      run_once: true
+      
+
+    - name: create empty report file
+      
+      file:
+        path: "{{ disk_space_report_dir }}/{{ inventory_hostname }}_disk_space_report.html"
+        state: touch
+        mode: '0644'
+      run_once: true 
+
+    - name: Generate Report
+      shell: |
+        echo "<html><body><h1>{{ inventory_hostname }} - Disk Space Report</h1>" > {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        echo "<h2>Root Disk (/)</h2>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        echo "<p>Status: {{ root_disk_status }}</p>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        {% if root_disk_status == 'Free Space not available' %}
+        echo "<p>Available Space: {{ size_available }} MB</p>" >> {{ disk_space_report_dir }}/disk_space_report.html
+        {% endif %}
+        echo "<h2>/var Disk</h2>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        echo "<p>Status: {{ var_disk_status }}</p>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        {% if var_disk_status == 'Free Space not available' %}
+        echo "<p>Available Space: {{ size_available }} MB</p>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+        {% endif %}
+        echo "</body></html>" >> {{ disk_space_report_dir }}/{{ inventory_hostname }}__disk_space_report.html
+      run_once: true
+  
+  rescue:
+    - name: Handle Errors
+      debug:
+        msg: "An error occurred while generating the disk space report."  

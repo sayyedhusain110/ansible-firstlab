@@ -1,6 +1,6 @@
 ---
 - name: Ping2 Playbook
-  hosts: localhost
+  hosts: linuxall
   become: true
   tasks:
     - name: Ping tasks

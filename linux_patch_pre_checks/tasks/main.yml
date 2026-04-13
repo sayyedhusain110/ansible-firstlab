@@ -9,5 +9,9 @@
   include_tasks: pre_check_backup.yml
   tags: pre_check_backup
 
+- name: Include Report amd email Generation Tasks
+  include_tasks: send_email.yml
+  tags: send_email
+
 
 
