@@ -1,6 +1,6 @@
 ---
 - name: Check Windows Connectivity
-  hosts: all
+  hosts: windowsall
   gather_facts: no
   become: no
 
