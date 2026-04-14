@@ -17,42 +17,55 @@
 
   tasks:
 
-  - name: Aggregate all host reports
-    become: false
-    run_once: true
-    delegate_to: localhost
-    set_fact:
-      all_reports: >-
-        {{ groups['all'] | map('extract', hostvars, 'host_report') | list }}
+    - name: Aggregate all host reports
+      become: false
+      run_once: true
+      delegate_to: localhost
+      set_fact:
+        all_reports: >-
+          {{
+            groups['all']
+            | map('extract', hostvars, 'host_report')
+            | select('defined')
+            | select('mapping')
+            | list
+          }}
+    - name: Debug all reports
+      become: false 
+      run_once: true
+      delegate_to: localhost
+      debug:
+        var: all_reports      
 
-  - name: Send patching report email
-    run_once: true
-    delegate_to: localhost
-    mail:
-      host: "{{ smtp_host }}"
-      port: "{{ smtp_port }}"
-      username: "{{ smtp_user }}"
-      password: "{{ smtp_password }}"
-      to: "{{ email_to }}"
-      subject: "Linux Patching Report - {{ ansible_date_time.date }}"
-      subtype: html
-      body: |
-        <h2>Patching Report</h2>
+    - name: Send patching report email
+      become: false
+      run_once: true
+      delegate_to: localhost
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_password }}"
+        to: "{{ email_to }}"
+        subject: "Linux Patching Report - {{ ansible_date_time.date }}"
+        subtype: html
+        body: |
+          <h2>Patching Report</h2>
 
-        <table border="1">
-        <tr>
-          <th>Host</th>
-          <th>Status</th>
-          <th>Updates</th>
-          <th>Uptime</th>
-        </tr>
+          <table border="1">
+          <tr>
+            <th>Host</th>
+            <th>Status</th>
+            <th>Updates</th>
+            <th>Uptime</th>
+          </tr>
 
-        {% for host in all_reports %}
-        <tr>
-          <td>{{ host.hostname }}</td>
-          <td>{{ host.status }}</td>
-          <td>{{ host.updates_remaining }}</td>
-          <td>{{ host.uptime }}</td>
-        </tr>
-        {% endfor %}
-        </table>
+          {% for host in all_reports %}
+          <tr>
+            <td>{{ host.hostname }}</td>
+            <td>{{ host.status }}</td>
+            <td>{{ host.updates_remaining }}</td>
+            <td>{{ host.uptime }}</td>
+          </tr>
+          {% endfor %}
+          </table>
