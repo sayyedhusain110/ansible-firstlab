@@ -1,8 +1,57 @@
 ---
-- name: Linux Patch Update
-  hosts: linuxall
-  become: true
-  gather_facts: false
+- name: Linux patching execution
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    smtp_user: er.husainhaider187@gmail.com
+    smtp_password: crdlrfsdqgndvqgp
+    email_to:
+      - er.husainhaider187@gmail.com
 
   roles:
     - linux_patch_update
+
+  tasks:
+
+  - name: Aggregate all host reports
+    run_once: true
+    delegate_to: localhost
+    set_fact:
+      all_reports: >-
+        {{ groups['all'] | map('extract', hostvars, 'host_report') | list }}
+
+  - name: Send patching report email
+    run_once: true
+    delegate_to: localhost
+    mail:
+      host: "{{ smtp_host }}"
+      port: "{{ smtp_port }}"
+      username: "{{ smtp_user }}"
+      password: "{{ smtp_password }}"
+      to: "{{ email_to }}"
+      subject: "Linux Patching Report - {{ ansible_date_time.date }}"
+      subtype: html
+      body: |
+        <h2>Patching Report</h2>
+
+        <table border="1">
+        <tr>
+          <th>Host</th>
+          <th>Status</th>
+          <th>Updates</th>
+          <th>Uptime</th>
+        </tr>
+
+        {% for host in all_reports %}
+        <tr>
+          <td>{{ host.hostname }}</td>
+          <td>{{ host.status }}</td>
+          <td>{{ host.updates_remaining }}</td>
+          <td>{{ host.uptime }}</td>
+        </tr>
+        {% endfor %}
+        </table>
