@@ -1,0 +1,32 @@
+- name: Fetch pre-patch mount status
+  shell: cat "{{ pre_patch_dir }}/df-ht.pre.out"
+  register: df_ht_pre_out
+  changed_when: false
+
+- set_fact:
+    mounts: "{{ df_ht_pre_out.stdout_lines }}"
+
+- block:
+
+    - name: Check mounts
+      shell: df -hT | grep "{{ item }}"
+      register: fs_checked
+      changed_when: false
+      loop: "{{ mounts }}"
+
+    - name: Write success report
+      lineinfile:
+        path: "{{ post_patch_dir }}/mount_status_report.ok"
+        line: "Hostname: {{ inventory_hostname }} | {{ item.item }} : Mount is ok"
+        create: yes
+      when: item.rc == 0
+      loop: "{{ fs_checked.results }}"
+
+  rescue:
+
+    - name: Write failure report
+      lineinfile:
+        path: "{{ post_patch_dir }}/mount_status_report.failed"
+        line: "Hostname: {{ inventory_hostname }} | {{ item.item }} : Mount check failed"
+        create: yes
+      loop: "{{ fs_checked.results }}"

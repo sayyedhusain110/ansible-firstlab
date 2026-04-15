@@ -1,0 +1,4 @@
+---
+# vars file for linux_patch_post_checks
+pre_patch_dir: /var/tmp/Pre-Patch-backup
+post_patch_dir: /var/tmp/Post-Patch-backup

@@ -1,0 +1,41 @@
+---
+- name: Collect Prechecks Facts
+  stat:
+     path: "{{ post_patch_dir }}"
+  register: postpatch
+  notify: Archive Pre-Patch Backup Directory
+
+- name: Create Pre-Patch Backup Directory if it does not exist
+  file:
+    path: "{{ post_patch_dir }}"
+    state: directory
+    mode: '0755'
+  when: postpatch.stat.exists == False
+
+ 
+- name: Archive Pre-Patch Backup Directory
+  archive:
+    path: "{{ post_patch_dir }}"
+    dest: "{{ post_patch_dir }}-{{ansible_date_time.date}}.tar.gz"
+    format: gz
+  register: postpatch_archive
+  when: postpatch.stat.exists == True
+  failed_when: false
+
+- name: Remove the old pre-check backup directory
+  file:
+    path: "{{ post_patch_dir }}"
+    state: absent
+  when: postpatch.stat.exists == True
+  register: postpatch_remove
+
+- name: Create New Pre-Patch Backup Directory
+  file:
+    path: "{{ post_patch_dir }}"
+    state: directory
+    mode: '0755'
+  when: postpatch_remove.changed == True
+
+- name: Include Mount Status Check Tasks
+  include_tasks: mount_status.yml
+  tags: mount_status
