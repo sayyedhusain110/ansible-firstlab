@@ -1,27 +1,21 @@
----
-- name: Zabbix Agent Installation
-  hosts: all
-  become: yes
+--- 
+- name: Import Zabbix GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
 
-  tasks:
-   
-    - name: Import Zabbix GPG key
-      ansible.builtin.rpm_key:
-        state: present
-        key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+- name: Install Zabbix repo
+  ansible.builtin.dnf:
+    name: https://repo.zabbix.com/zabbix/7.4/release/rhel/8/noarch/zabbix-release-latest-7.4.el8.noarch.rpm
+    state: present
 
-    - name: Install Zabbix repo
-      ansible.builtin.dnf:
-        name: https://repo.zabbix.com/zabbix/7.4/release/rhel/8/noarch/zabbix-release-latest-7.4.el8.noarch.rpm
-        state: present
+- name: Install Zabbix agent
+  ansible.builtin.dnf:
+    name: zabbix-agent2   # 🔥 use agent2 (recommended)
+    state: present
 
-    - name: Install Zabbix agent
-      ansible.builtin.dnf:
-        name: zabbix-agent2   # 🔥 use agent2 (recommended)
-        state: present
-
-    - name: Start and enable Zabbix agent
-      ansible.builtin.service:
-        name: zabbix-agent2
-        state: started
-        enabled: yes
+- name: Start and enable Zabbix agent
+  ansible.builtin.service:
+    name: zabbix-agent2
+    state: started
+    enabled: yes

@@ -1,0 +1,8 @@
+---
+- name: Zabbix Template Installation
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - zabbix_agent_installation

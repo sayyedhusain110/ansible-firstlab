@@ -1,5 +1,4 @@
 ---
-
 - name: Check Linux service status and email report
 
   hosts: all
