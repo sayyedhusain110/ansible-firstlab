@@ -30,6 +30,7 @@
   tasks:
 
     - name: Create artifact directory (control node)
+      become: false 
       file:
         path: "{{ artifact_dir }}"
         state: directory
@@ -94,6 +95,7 @@
       delegate_to: localhost
 
     - name: Send HTML email report
+      become: false 
       mail:
         host: "{{ smtp_host }}"
         port: "{{ smtp_port }}"
@@ -108,6 +110,7 @@
       delegate_to: localhost
 
     - name: Cleanup artifact directory (control node)
+      become: false 
       delegate_to: localhost
       file:
         path: "{{ artifact_dir }}"
