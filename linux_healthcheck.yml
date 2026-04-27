@@ -1,0 +1,115 @@
+---
+- name: Collect Linux System Artifacts and Send HTML Report
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    report_recipient: "er.husainhaider187@gmail.com"
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    username: er.husainhaider187@gmail.com
+    password: crdlrfsdqgndvqgp   # Use Ansible Vault
+    artifact_dir: "./artifacts"
+
+    commands_to_run:
+      - uname -a "3.1"
+      - cat /etc/redhat-release
+      - systemctl status firewalld
+      - systemctl status SplunkForwarder
+      - systemctl status falcon-sensor.service
+      - ifconfig -a
+      - iptables -L
+      - lscpu
+      - free -h
+      - lsblk
+      - df -h
+      - /opt/quest/bin/vastool -u host/ info id
+      - /opt/quest/bin/vgptool listgpc
+
+  tasks:
+
+    - name: Create artifact directory (control node)
+      file:
+        path: "{{ artifact_dir }}"
+        state: directory
+      delegate_to: localhost
+      run_once: true
+
+    - name: Run required commands
+      shell: "{{ item }}"
+      register: command_output
+      ignore_errors: yes
+      loop: "{{ commands_to_run }}"
+
+    - name: Build HTML report
+      set_fact:
+        html_report: |
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial; background-color: #f4f6f8; }
+              h2 { color: #2c3e50; }
+              .section {
+                  background-color: #ffffff;
+                  padding: 15px;
+                  margin-bottom: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+              }
+              pre {
+                  background-color: #1e1e1e;
+                  color: #00ff90;
+                  padding: 10px;
+                  overflow-x: auto;
+              }
+            </style>
+          </head>
+          <body>
+
+          <h2>Linux System Artifact Report</h2>
+          <b>Host:</b> {{ inventory_hostname }}<br>
+          <b>Date:</b> {{ ansible_date_time.iso8601 }}<br><br>
+
+          {% for result in command_output.results %}
+          <div class="section">
+              <h3>Command: {{ result.item }}</h3>
+              <pre>
+          {{ result.stdout | default('NO OUTPUT') }}
+              </pre>
+              {% if result.stderr %}
+              <b>Error:</b>
+              <pre>{{ result.stderr }}</pre>
+              {% endif %}
+          </div>
+          {% endfor %}
+
+          </body>
+          </html>
+
+    - name: Save HTML artifact locally
+      copy:
+        content: "{{ html_report }}"
+        dest: "{{ artifact_dir }}/{{ inventory_hostname }}_report.html"
+      delegate_to: localhost
+
+    - name: Send HTML email report
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        to: "{{ report_recipient }}"
+        from: "{{ username }}"
+        subject: "Linux Artifact Report - {{ inventory_hostname }}"
+        subtype: html
+        body: "{{ html_report }}"
+        secure: starttls
+      delegate_to: localhost
+
+    - name: Cleanup artifact directory (control node)
+      delegate_to: localhost
+      file:
+        path: "{{ artifact_dir }}"
+        state: absent
+      

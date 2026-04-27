@@ -46,7 +46,7 @@
 
     - name: Send report via email
       delegate_to: localhost
-      community.general.mail:
+      mail:
         host: smtp.gmail.com
         port: 587
         username: er.husainhaider187@gmail.com

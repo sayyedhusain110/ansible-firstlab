@@ -62,7 +62,7 @@
  
     - name: Send service status email
 
-      ansible.builtin.mail:
+      mail:
 
         host: "{{ smtp_host }}"
 
