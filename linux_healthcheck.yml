@@ -89,6 +89,7 @@
           </html>
 
     - name: Save HTML artifact locally
+      become: false
       copy:
         content: "{{ html_report }}"
         dest: "{{ artifact_dir }}/{{ inventory_hostname }}_report.html"
